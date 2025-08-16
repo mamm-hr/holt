@@ -2,31 +2,30 @@
 using System;
 using System.Runtime.Versioning;
 
-namespace Holt
+namespace Holt;
+
+internal static partial class PlatformSpecific
 {
-    internal static partial class PlatformSpecific
+    public static void ConfigureLogging(ILoggingBuilder loggingBuilder)
     {
-        public static void ConfigureLogging(ILoggingBuilder loggingBuilder)
-        {
-            if(OperatingSystem.IsWindows())
-                ConfigureLoggingWindows( loggingBuilder );
-            else if(OperatingSystem.IsLinux())
-                ConfigureLoggingLinux( loggingBuilder );
-        }
+        if(OperatingSystem.IsWindows())
+            ConfigureLoggingWindows( loggingBuilder );
+        else if(OperatingSystem.IsLinux())
+            ConfigureLoggingLinux( loggingBuilder );
+    }
 
-        [SupportedOSPlatform("windows")]
-        private static void ConfigureLoggingWindows( ILoggingBuilder loggingBuilder )
+    [SupportedOSPlatform("windows")]
+    private static void ConfigureLoggingWindows( ILoggingBuilder loggingBuilder )
+    {
+        _ = loggingBuilder.AddEventLog( config =>
         {
-            _ = loggingBuilder.AddEventLog( config =>
-            {
-                config.SourceName = "Holt";
-            } );
-        }
+            config.SourceName = "Holt";
+        } );
+    }
 
-        [SupportedOSPlatform("linux")]
-        private static void ConfigureLoggingLinux(ILoggingBuilder loggingBuilder)
-        {
-            loggingBuilder.AddEventSourceLogger();
-        }
+    [SupportedOSPlatform("linux")]
+    private static void ConfigureLoggingLinux(ILoggingBuilder loggingBuilder)
+    {
+        loggingBuilder.AddEventSourceLogger();
     }
 }
