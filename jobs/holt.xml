@@ -1,0 +1,7 @@
+<job>
+  <name>Holt</name>
+  <repositoryUrl>https://github.com/mamm-hr/holt.git</repositoryUrl>
+  <branch>main</branch>
+  <localPath>backups/holt</localPath>
+  <intervalMinutes>2</intervalMinutes>
+</job>

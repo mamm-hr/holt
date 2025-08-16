@@ -1,8 +1,13 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
-using Holt.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Holt.Services;
 
@@ -10,7 +15,7 @@ public class JobMonitorService : BackgroundService
 {
     private readonly ILogger<JobMonitorService> _logger;
     private readonly IServiceProvider _services;
-    private readonly Dictionary<string, RepositoryJob> _jobs = new();
+    private readonly Dictionary<string, RepositoryJob> _jobs = [];
     private FileSystemWatcher? _watcher;
     private readonly string _jobDirectory;
 
@@ -55,7 +60,7 @@ public class JobMonitorService : BackgroundService
         try
         {
             var config = LoadConfig(path);
-            if (config == null)
+            if (config is null)
             {
                 return;
             }
@@ -87,13 +92,13 @@ public class JobMonitorService : BackgroundService
         }
     }
 
-    private static JobConfig? LoadConfig(string path)
+    private static Configuration.JobConfig? LoadConfig(string path)
     {
         try
         {
-            var serializer = new XmlSerializer(typeof(JobConfig));
+            var serializer = new XmlSerializer(typeof(Configuration.JobConfig));
             using var stream = File.OpenRead(path);
-            return serializer.Deserialize(stream) as JobConfig;
+            return serializer.Deserialize(stream) as Configuration.JobConfig;
         }
         catch
         {

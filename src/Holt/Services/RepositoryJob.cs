@@ -1,17 +1,20 @@
 using LibGit2Sharp;
 using Microsoft.Extensions.Logging;
-using Holt.Configuration;
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Holt.Services;
 
 public class RepositoryJob : IDisposable
 {
-    private readonly JobConfig _config;
+    private readonly Configuration.JobConfig _config;
     private readonly ILogger<RepositoryJob> _logger;
     private readonly CancellationTokenSource _cts = new();
     private Task? _task;
 
-    public RepositoryJob(JobConfig config, ILogger<RepositoryJob> logger)
+    public RepositoryJob(Configuration.JobConfig config, ILogger<RepositoryJob> logger)
     {
         _config = config;
         _logger = logger;
@@ -61,7 +64,7 @@ public class RepositoryJob : IDisposable
     private Task SyncAsync()
     {
         using var repo = new Repository(_config.LocalPath);
-        Commands.Fetch(repo, "origin", Array.Empty<string>(), new FetchOptions(), null);
+        Commands.Fetch(repo, "origin", [], new FetchOptions(), null);
         var branch = repo.Branches[$"origin/{_config.Branch}"];
         if (branch != null)
         {
@@ -83,5 +86,6 @@ public class RepositoryJob : IDisposable
             // ignore
         }
         _cts.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

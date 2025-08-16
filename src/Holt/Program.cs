@@ -1,29 +1,18 @@
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Holt;
 using Holt.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
+var builder = Host.CreateApplicationBuilder(args);
 
 // Allow running as Windows service or systemd service
-builder.Host.UseWindowsService();
-builder.Host.UseSystemd();
+builder.Services.AddWindowsService();
+builder.Services.AddSystemd();
 
 // Register background services
 builder.Services.AddHostedService<JobMonitorService>();
 
 // Configure logging
-if (OperatingSystem.IsWindows())
-{
-    builder.Logging.AddEventLog(config =>
-    {
-        config.SourceName = "Holt";
-    });
-}
-else
-{
-    builder.Logging.AddEventSourceLogger();
-}
+PlatformSpecific.ConfigureLogging( builder.Logging );
 
-var host = builder.Build();
-
-await host.RunAsync();
+await builder.Build().RunAsync();
