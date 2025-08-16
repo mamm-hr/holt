@@ -1,2 +1,2 @@
 # Holt
-Holds and vaults Git repositories locally for safe keeping.
+Holds and vaults Git repositories locally for safekeeping.
