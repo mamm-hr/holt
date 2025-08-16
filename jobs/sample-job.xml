@@ -1,0 +1,7 @@
+<job>
+  <name>Sample</name>
+  <repositoryUrl>https://github.com/example/repo.git</repositoryUrl>
+  <branch>main</branch>
+  <localPath>backups/sample</localPath>
+  <intervalMinutes>60</intervalMinutes>
+</job>
